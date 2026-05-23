@@ -12,7 +12,12 @@ class LegacyProductService
     {
         $this->httpClient = $httpClient ?? new NativeHttpClient();
         $envUrl = $legacyApiUrl ?? (getenv('LEGACY_API_URL') ?: null);
-        $this->baseUrl = rtrim($envUrl ?? 'http://localhost:8080', '/');
+
+        if ($envUrl === null || trim($envUrl) === '') {
+            throw new \InvalidArgumentException('LEGACY_API_URL não configurada no ambiente.');
+        }
+
+        $this->baseUrl = rtrim($envUrl, '/');
     }
 
     private function request(string $method, string $path, ?array $payload = null): array
